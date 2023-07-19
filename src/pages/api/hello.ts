@@ -15,7 +15,7 @@ async function getRecs(location: string, days: number) { //takes in an input fro
       {
         role: "user", //lets chat know that we will be giving it a prompt as a user
         content: //the prompt
-            `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out with bullets. also remove the days`,
+            `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out`,
       },
     ],
     max_tokens: 200, //parameters we set
@@ -33,10 +33,32 @@ async function getRecs(location: string, days: number) { //takes in an input fro
     if (contentArray[i][0] === '-') {     //if the current string starts with a -,
       contentArray[i] = contentArray[i].slice(2)  //removes the first 2 characters
     }
+    if (/^[0-9]/.test(contentArray[i])) {
+      contentArray[i] = contentArray[i].slice(3)
+    }
   }
+
+  let bigChunk = [];
+  let chunk = [];
+
+  for (let i = 0; i < contentArray.length; i++) {
+    if (contentArray[i] !== '') {
+      if (i === 0) {
+        chunk = [];
+      } else if (contentArray[i].startsWith('Day') && i !== 0) {
+        bigChunk.push(chunk);
+        chunk = [];
+      } else {
+        chunk.push(contentArray[i]);
+      }
+    }
+  }
+
+  bigChunk.push(chunk);
+
   //console.log(contentArray);
 
-  return contentArray //returns the split up and edited array of strings
+  return bigChunk //returns the split up and edited array of strings
 }
 
 export default async function handler( //calls the function automatically
