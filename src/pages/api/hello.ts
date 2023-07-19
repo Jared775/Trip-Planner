@@ -6,7 +6,7 @@ async function getRecs(location: string, days: number) {
 
   const openai = new OpenAIApi(
       new Configuration({
-        apiKey: "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"//process.env.OPENAI_API_KEY,
+        apiKey: process.env.OPENAI_API_KEY,
       })
   );
 
@@ -27,8 +27,8 @@ async function getRecs(location: string, days: number) {
   });
   const response = rawResponse.data
 
-
-  const content: string = response.choices[0].message.content;
+  const content: string | undefined = response.choices[0].message?.content;
+  if (!content) return []
   const contentArray = content.split("\n");
   for (let i = 0; i < contentArray.length; i++) {
     if (contentArray[i][0] === '-') {
