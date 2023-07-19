@@ -2,10 +2,14 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { FieldValues, useForm } from "react-hook-form";
 import axios from "axios";
+import { useState } from "react";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+
+  const [content, setContent] = useState<string[][]>([])
+
   const {
     register,
     handleSubmit,
@@ -21,8 +25,7 @@ export default function Home() {
       });
 
       // Access the response data
-      console.log(response.data);
-
+      setContent(response.data)
       // Process the data further as needed
 
     } catch (error) {
@@ -40,6 +43,11 @@ export default function Home() {
         {errors.days && <p>Please enter number for days.</p>}
         <input type="submit" />
       </form>
+
+      <div className="w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+        <p className="mb-5 text-base text-gray-500 sm:text-lg dark:text-gray-400">{JSON.stringify(content)}</p>
+      </div>
+
     </main>
   )
 }
