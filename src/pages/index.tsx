@@ -10,11 +10,12 @@ export default function Home() {
 
   const [content, setContent] = useState<string[][]>([])
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
+  const {             //calls on the object useForm() and assigns some of its attributes to the variables below
+    register,         //calls on the register attribute of the object, useForm()
+    handleSubmit,     //calls on the handleSubmit attribute of useForm()
+    formState: { errors, isSubmitting },  //calls on the formstate attribute of useform, but also calls on the errors and isSubmitting attribute of formState
   } = useForm();
+
   const submit = async (data: FieldValues) => {
     try {
       const response = await axios.get('/api/hello', {
@@ -41,7 +42,10 @@ export default function Home() {
         {errors.location && <p>Location is required.</p>}
         <input {...register('days', { pattern: /\d+/ })} />
         {errors.days && <p>Please enter number for days.</p>}
-        <input type="submit" />
+        <button disabled={isSubmitting} className="btn btn-primary mr-1">
+          {isSubmitting && <span className="spinner-border spinner-border-sm mr-1"></span>}
+          Submit
+        </button>
       </form>
 
       <div className="w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700">
