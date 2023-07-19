@@ -19,7 +19,7 @@ async function getRecs(location: string, days: number) { //takes in an input fro
             `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out with bullets. also remove the days`,
       },
     ],
-    max_tokens: 3500, //parameters we set
+    max_tokens: 500, //parameters we set
     temperature: 0,   //check this cause i ain't writing allat: https://platform.openai.com/docs/api-reference/completions/create?lang=node.js
     top_p: 1,
     frequency_penalty: 0,
