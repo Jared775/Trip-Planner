@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { FieldValues, useForm } from "react-hook-form";
+import axios from "axios";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -11,25 +12,19 @@ export default function Home() {
     formState: { errors },
   } = useForm();
   const submit = async (data: FieldValues) => {
-    // console.log('submitted ', data)
-    const url = new URL('/api/hello', window.location.origin);
-    const location = data.location
-    const days = data.days
-    url.searchParams.append('location', location);
-    url.searchParams.append('days', String(days));
-
     try {
-      const response = await fetch(url.toString());
+      const response = await axios.get('/api/hello', {
+        params: {
+          location: data.location,
+          days: data.days
+        }
+      });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+      // Access the response data
+      console.log(response.data);
 
-        // Process the data further as needed
+      // Process the data further as needed
 
-      } else {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
     } catch (error) {
       console.error('Error:', error);
     }
