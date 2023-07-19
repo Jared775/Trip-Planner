@@ -3,8 +3,6 @@ import type { NextApiRequest, NextApiResponse } from 'next' //imports the api ne
 import {Configuration, OpenAIApi} from "openai"; //imports openai so we can call it later
 
 async function getRecs(location: string, days: number) { //takes in an input from the website url
-  const startTime = new Date().getTime()
-
   const openai = new OpenAIApi(
       new Configuration({
         apiKey: process.env.OPENAI_API_KEY, //tells the program to read an environment variable outside the program to get the api key cause its secret
@@ -37,9 +35,6 @@ async function getRecs(location: string, days: number) { //takes in an input fro
     }
   }
   //console.log(contentArray);
-  const endTime = new Date().getTime()
-  const elapsed = endTime - startTime
-  console.log("THIS TOOK ", elapsed)
 
   return contentArray //returns the split up and edited array of strings
 }
