@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next' //imports the api ne
 import {Configuration, OpenAIApi} from "openai"; //imports openai so we can call it later
 
 async function getRecs(location: string, days: number) { //takes in an input from the website url
+  const startTime = new Date().getTime()
 
   const openai = new OpenAIApi(
       new Configuration({
@@ -19,7 +20,7 @@ async function getRecs(location: string, days: number) { //takes in an input fro
             `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out with bullets. also remove the days`,
       },
     ],
-    max_tokens: 500, //parameters we set
+    max_tokens: 200, //parameters we set
     temperature: 0,   //check this cause i ain't writing allat: https://platform.openai.com/docs/api-reference/completions/create?lang=node.js
     top_p: 1,
     frequency_penalty: 0,
@@ -36,7 +37,9 @@ async function getRecs(location: string, days: number) { //takes in an input fro
     }
   }
   //console.log(contentArray);
-
+  const endTime = new Date().getTime()
+  const elapsed = endTime - startTime
+  console.log("THIS TOOK ", elapsed)
 
   return contentArray //returns the split up and edited array of strings
 }
