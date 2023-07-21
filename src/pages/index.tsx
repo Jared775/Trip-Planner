@@ -48,22 +48,23 @@ export default function Home() {
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
     >
-      <form onSubmit={handleSubmit(submit)} className={'flex flex-col'}>
-        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Location</label>
+      <form onSubmit={handleSubmit(submit)} className={'flex flex-col'} autoComplete = "off">
+        <label className="block mb-2 text-m font-medium text-gray-900 dark:text-white">Location</label>
         <input className={"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}
                placeholder="ex. Tokyo, Japan"
                {...register('location', { required: true })}
         />
-        {errors.location && <p>Location is required.</p>}
+        {errors.location && <p className = "text-red-600 text-sm">Location is required.</p>}
         {/*^checks if there is an error and the && checks if both conditions are true, and if they are then it displays the message*/}
 
-        <label htmlFor="password" className="mt-6 block text-sm font-medium text-gray-900 dark:text-white">Number of days</label>
+        <label htmlFor="password" className="mt-6 block text-m font-medium text-gray-900 dark:text-white">Number of days</label>
         {/*mt increases or decreases the amount of gap between the two boxes*/}
-        <input className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        <input autoComplete = "off" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+               placeholder = "ex. 4"
                {...register('days', { pattern: /\d+/ })} />
         {errors.days && <p>Please enter number for days.</p>}
 
-        <button disabled={isSubmitting} className="mt-3 text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <button disabled={isSubmitting} className="mt-6 text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           {isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
             <svg aria-hidden="true" role="status" className="inline w-4 h-4 mr-3 text-white animate-spin"
                  viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

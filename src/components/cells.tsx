@@ -84,7 +84,7 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
-                className={"block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"}
+                className={"mt-2 block max-w-sm p-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"}
                 style={getListStyle(snapshot.isDraggingOver)}
                 {...provided.droppableProps}
               >
@@ -105,14 +105,14 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
                         )}
                       >
                         <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-around"
-                          }}
+                          className = "flex justify-between block max-w-sm p-1.5 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
                         >
-                          {item.content}
+                          <div>
+                            {item.content}
+                          </div>
                           <button
                             type="button"
+                            className = "text-red-600 font-extrabold"
                             onClick={() => {
                               const newState = [...cellsData];
                               newState[ind].splice(index, 1);
@@ -121,7 +121,7 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
                               );
                             }}
                           >
-                            delete
+                            X
                           </button>
                         </div>
                       </div>

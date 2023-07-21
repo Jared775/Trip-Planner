@@ -15,7 +15,22 @@ async function getRecs(location: string, days: number) { //takes in an input fro
       {
         role: "user", //lets chat know that we will be giving it a prompt as a user
         content: //the prompt
-            `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out`,
+            `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out. 
+ex. 
+Day 1:
+activity 1
+activity 2
+activity 3
+
+Day 2:
+activity 1
+activity 2
+activity 3
+
+Day 3:
+activity 1
+activity 2
+activity 3`,
       },
     ],
     max_tokens: 200, //parameters we set
@@ -75,7 +90,7 @@ export default async function handler( //calls the function automatically
   }
 
   const days = parseInt(daysString, 10); //makes a variable 'days' which is the integer form of the daysString
-  if (Number.isNaN(days) || days < 1 || days > 5) { //if the number of days is less than one or more than 5...
+  if (Number.isNaN(days) || days < 1 || days > 14) { //if the number of days is less than one or more than 5...
     res.status(500).json({ "error_code": "bad request" }) //respond with an error code
     return //kill yourself (look at other kill yourself message)
   }
