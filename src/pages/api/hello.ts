@@ -15,7 +15,7 @@ async function getRecs(location: string, days: number) { //takes in an input fro
       {
         role: "user", //lets chat know that we will be giving it a prompt as a user
         content: //the prompt
-            `plan a ${days} day itinerary for ${location}, but do not print it, extract only the key words that are places in the itinerary and list them out. 
+            `plan a ${days} day itinerary for ${location}, but do not print it out, extract key words that are locations and list them out under their respective days according to the format provided below.
 ex. 
 Day 1:
 activity 1

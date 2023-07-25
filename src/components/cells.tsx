@@ -52,31 +52,31 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
 
   const { cellsData, setCellsData } = props;
 
-  function onDragEnd(result: DropResult) {
-    const { source, destination } = result;
+  function onDragEnd(result: DropResult) {    //makes the function
+    const { source, destination } = result; //makes the result the change in items from boxes
 
     // dropped outside the list
     if (!destination) {
       return;
     }
-    const sInd = +source.droppableId;
-    const dInd = +destination.droppableId;
+    const sInd = +source.droppableId;     //makes the variable which controls the source box
+    const dInd = +destination.droppableId;//makes the variable which controls the destination box
 
-    if (sInd === dInd) {
-      const items = reorder(cellsData[sInd], source.index, destination.index);
-      const newState = [...cellsData];
-      newState[sInd] = items;
-      setCellsData(newState);
+    if (sInd === dInd) {   //if the user drops an item into its own box
+      const items = reorder(cellsData[sInd], source.index, destination.index); //reorder the box according to where they drop the item
+      const newState = [...cellsData];  //clones the cells data, so all the boxes
+      newState[sInd] = items;   //changes the cloned day to match the new items list order
+      setCellsData(newState);   //makes the "set_n" of the cells function the cloned cells data
     } else {
-      const result = move(cellsData[sInd], cellsData[dInd], source, destination);
-      const newState = [...cellsData];
-      newState[sInd] = result[sInd];
-      newState[dInd] = result[dInd];
+      const result = move(cellsData[sInd], cellsData[dInd], source, destination); //moves the item from the source box to the destination box
+      const newState = [...cellsData]; //clones the data into newState
+      newState[sInd] = result[sInd]; //changes the data from source box in the cloned version
+      newState[dInd] = result[dInd]; //changes the data from the destination box in the cloned version
 
-      setCellsData(newState.filter(group => group.length));
+      setCellsData(newState); //sets the cells data to the cloned version and checks if the length is 0, if so it gets kicked out
     }
   }
-  return (
+  return (    //returns the below code
     <div className={`grid grid-rows-${cellsData.length}`}>
       <DragDropContext onDragEnd={onDragEnd}>
         {cellsData.map((el, ind) => (
@@ -88,6 +88,7 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
                 style={getListStyle(snapshot.isDraggingOver)}
                 {...provided.droppableProps}
               >
+                <p className = "mb-3 text-center text-gray-500 dark:text-gray-400"> Day {ind+1}</p>
                 {el.map((item, index) => (
                   <Draggable
                     key={item.id}
@@ -117,7 +118,7 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
                               const newState = [...cellsData];
                               newState[ind].splice(index, 1);
                               setCellsData(
-                                newState.filter(group => group.length)
+                                newState
                               );
                             }}
                           >
