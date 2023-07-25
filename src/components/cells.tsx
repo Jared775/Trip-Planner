@@ -1,9 +1,10 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, {Dispatch, SetStateAction, useState} from "react";
 import { DragDropContext, Draggable, DraggableLocation, DraggingStyle, Droppable, DropResult, NotDraggingStyle } from "react-beautiful-dnd";
 import { Property } from "csstype";
 import UserSelect = Property.UserSelect;  //imports all the fun stuff at the top of index.tsx
 
 export type CellItem = { id: string; content: string }; //exports the result of the function
+
 
 const reorder = (list: CellItem[], startIndex: number, endIndex: number) => {   //creates a function that takes in the list, and the first and last values
   const result = Array.from(list);  //creates an array from the list
@@ -48,10 +49,11 @@ const getListStyle = (isDraggingOver: boolean | undefined) => ({
   // width: 250
 });
 
-export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<SetStateAction<CellItem[][]>> }) {
+export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<SetStateAction<CellItem[][]>>, drawerVisible:boolean, setDrawerVisible:Dispatch<SetStateAction<boolean>> , onButtonClick: (button: string)=>Promise<void>}) {
 
   const { cellsData, setCellsData } = props;
-
+  const {drawerVisible, setDrawerVisible} = props;
+  const {onButtonClick} = props;
   function onDragEnd(result: DropResult) {    //makes the function
     const { source, destination } = result; //makes the result the change in items from boxes
 
@@ -77,6 +79,7 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
     }
   }
   return (    //returns the below code
+      <div>
     <div className={`grid grid-rows-${cellsData.length}`}>
       <DragDropContext onDragEnd={onDragEnd}>
         {cellsData.map((el, ind) => (
@@ -94,9 +97,13 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
                     key={item.id}
                     draggableId={item.id}
                     index={index}
+
                   >
                     {(provided, snapshot) => (
                       <div
+                          onDoubleClick={()=>{
+                            onButtonClick(item.content).catch(console.error)
+                          }}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
@@ -136,6 +143,7 @@ export function Cells(props: { cellsData: CellItem[][], setCellsData: Dispatch<S
         ))}
       </DragDropContext>
     </div>
+      </div>
   );
 }
 

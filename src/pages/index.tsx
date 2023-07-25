@@ -4,6 +4,7 @@ import axios from "axios";
 import {useEffect, useState} from "react";
 import {CellItem, Cells} from "@/components/cells";
 import {DatePicker} from "@/components/datePicker";
+import Sidebar from "@/components/sidebar";
 
 const inter = Inter({ subsets: ['latin'] })
 function calculateDaysBetweenDates(startDate: Date, endDate: Date): number {
@@ -13,11 +14,24 @@ function calculateDaysBetweenDates(startDate: Date, endDate: Date): number {
   // Convert the time difference to days
   return Math.floor(timeDiff / (1000 * 60 * 60 * 24) + 1);
 }
+
+const testItems: CellItem[][] = [
+    [
+      {'id': "Marina Bay Sands", content: "Marina Bay Sands"}
+    ],
+  [
+    {'id': "Marina Bay Sands", content: "Marina Bay Sands"}
+  ],
+]
+
 export default function Home() {
 
   const [content, setContent] = useState<CellItem[][]>([])
   const [startDate, setStartDate,] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
+  const [drawerVisible, setDrawerVisible] = useState(false)
+  const [sidebarText, setSidebarText] = useState('loading...')
+  const [buttonLocationName, setButtonLocationName] = useState('...')
   const setDateAndPrint = (newDate:Date) => {
     setStartDate(newDate)
     console.log(newDate)
@@ -30,6 +44,7 @@ export default function Home() {
     daysErrorMsg = "Can't be more than 5 days (we are on a budget)"
   }
   const {             //calls on the object useForm() and assigns some of its attributes to the variables below
+    getValues,
     register,         //calls on the register attribute of the object, useForm()
     handleSubmit,     //calls on the handleSubmit attribute of useForm()
     formState: { errors, isSubmitting },  //calls on the formstate attribute of useform, but also calls on the errors and isSubmitting attribute of formState
@@ -60,6 +75,23 @@ export default function Home() {
       console.error('Error:', error);
     }
   }
+
+  const onButtonClick = async (button: string) => {
+    try {
+      setDrawerVisible(true)
+      const buttonResponse = await axios.get('/api/goodbye', {
+        params: {
+          location: getValues('location'),
+          button: button
+        }
+      })
+      setSidebarText(buttonResponse.data)
+      setButtonLocationName(button)
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+
   const [windowLoaded, setWindowLoaded] = useState(false);
   useEffect(() => {
     setWindowLoaded(true)
@@ -112,8 +144,9 @@ export default function Home() {
       {/*  <p className="mb-5 text-base text-gray-500 sm:text-lg dark:text-gray-400">{JSON.stringify(content)}</p>*/}
       {/*</div>*/}
       {windowLoaded &&
-        <Cells setCellsData={setContent} cellsData={content} />
+        <Cells setCellsData={setContent} cellsData={content} drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} onButtonClick={onButtonClick}/>
       }
+      <Sidebar drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} sidebarText={sidebarText} buttonLocationName={buttonLocationName}></Sidebar>
     </main>
   )
 }
