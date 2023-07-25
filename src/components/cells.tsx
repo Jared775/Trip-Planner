@@ -1,33 +1,33 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { DragDropContext, Draggable, DraggableLocation, DraggingStyle, Droppable, DropResult, NotDraggingStyle } from "react-beautiful-dnd";
 import { Property } from "csstype";
-import UserSelect = Property.UserSelect;
+import UserSelect = Property.UserSelect;  //imports all the fun stuff at the top of index.tsx
 
-export type CellItem = { id: string; content: string };
+export type CellItem = { id: string; content: string }; //exports the result of the function
 
-const reorder = (list: CellItem[], startIndex: number, endIndex: number) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
+const reorder = (list: CellItem[], startIndex: number, endIndex: number) => {   //creates a function that takes in the list, and the first and last values
+  const result = Array.from(list);  //creates an array from the list
+  const [removed] = result.splice(startIndex, 1); //slices out the first item
+  result.splice(endIndex, 0, removed);    //splices out the last item
 
-  return result;
+  return result;    //returns the chopped list
 };
 
 /**
  * Moves an item from one list to another list.
  */
 const move = (source: CellItem[], destination: CellItem[], droppableSource: DraggableLocation, droppableDestination: DraggableLocation) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
+  const sourceClone = Array.from(source);   //creates an array for the original cell
+  const destClone = Array.from(destination);   //creates an array for the destination cell
+  const [removed] = sourceClone.splice(droppableSource.index, 1); //removes the item from the original cell
 
   destClone.splice(droppableDestination.index, 0, removed);
 
   const result: Record<string, CellItem[]> = {};
-  result[droppableSource.droppableId] = sourceClone;
-  result[droppableDestination.droppableId] = destClone;
+  result[droppableSource.droppableId] = sourceClone; //removes the item from the original list
+  result[droppableDestination.droppableId] = destClone; //adds it to the destination list
 
-  return result;
+  return result; //returns the result
 };
 
 const getItemStyle = (isDragging: boolean, draggableStyle: DraggingStyle | NotDraggingStyle | undefined) => ({

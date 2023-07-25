@@ -1,36 +1,56 @@
-import { Inter } from 'next/font/google'
-import { FieldValues, useForm } from "react-hook-form";
+import {Inter} from 'next/font/google'
+import {FieldValues, useForm} from "react-hook-form";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { CellItem, Cells } from "@/components/cells";
+import {useEffect, useState} from "react";
+import {CellItem, Cells} from "@/components/cells";
+import {DatePicker} from "@/components/datePicker";
 
 const inter = Inter({ subsets: ['latin'] })
+function calculateDaysBetweenDates(startDate: Date, endDate: Date): number {
+  // Calculate the time difference in milliseconds
+  const timeDiff = endDate.getTime() - startDate.getTime();
 
+  // Convert the time difference to days
+  return Math.floor(timeDiff / (1000 * 60 * 60 * 24) + 1);
+}
 export default function Home() {
 
   const [content, setContent] = useState<CellItem[][]>([])
-
+  const [startDate, setStartDate,] = useState(new Date())
+  const [endDate, setEndDate] = useState(new Date())
+  const setDateAndPrint = (newDate:Date) => {
+    setStartDate(newDate)
+    console.log(newDate)
+  }
+  const days = calculateDaysBetweenDates(startDate, endDate)
+  let daysErrorMsg: string = ''
+  if (days < 0){
+    daysErrorMsg = "Start date is before the end date??"
+  } else if (days > 5) {
+    daysErrorMsg = "Can't be more than 5 days (we are on a budget)"
+  }
   const {             //calls on the object useForm() and assigns some of its attributes to the variables below
     register,         //calls on the register attribute of the object, useForm()
     handleSubmit,     //calls on the handleSubmit attribute of useForm()
     formState: { errors, isSubmitting },  //calls on the formstate attribute of useform, but also calls on the errors and isSubmitting attribute of formState
-  } = useForm();
+  } = useForm({values: {days: days, location: ''}});
+
 
   const submit = async (data: FieldValues) => {
     try {
-      const response = await axios.get('/api/hello', {
-        params: {
-          location: data.location,
-          days: data.days
+      const response = await axios.get('/api/hello', {  //makes the response using the openai api
+        params: {   //the parameters
+          location: data.location, //defines the location as the one from the data
+          days: data.days //defines the number of days from the days in the data
         }
       });
 
       // Access the response data
       const itinerary: string[][] = response.data
       setContent(
-        itinerary.map((day) => (
-          day.map((attraction) => (
-            { id: attraction, content: attraction }
+        itinerary.map((day) => (    //maps the function to apply to all the days
+          day.map((attraction) => ( //relates the attraction given on that day to the day
+            { id: attraction, content: attraction } //gives the attraction an id and specifies the content
           ))
         ))
       )
@@ -58,13 +78,20 @@ export default function Home() {
         {/*^checks if there is an error and the && checks if both conditions are true, and if they are then it displays the message*/}
 
         <label htmlFor="password" className="mt-6 block text-m font-medium text-gray-900 dark:text-white">Number of days</label>
+        <div className = 'flex'>
+        <DatePicker date={startDate} setDate={setStartDate} ></DatePicker>
+          <span className="mt-2.5 mx-4 text-gray-500">to</span>
+          <DatePicker date={endDate} setDate={setEndDate} ></DatePicker>
+        </div>
+        {daysErrorMsg && <p className = "text-red-600 text-sm">{daysErrorMsg}</p>}
+
         {/*mt increases or decreases the amount of gap between the two boxes*/}
-        <input autoComplete = "off" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        <input type = "hidden" autoComplete = "off" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                placeholder = "ex. 4"
                {...register('days', { pattern: /\d+/ })} />
         {errors.days && <p>Please enter number for days.</p>}
 
-        <button disabled={isSubmitting} className="mt-6 text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <button disabled={isSubmitting || !!daysErrorMsg} className={"mt-6 text-white bg-gray-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:focus:ring-blue-800 " + (!daysErrorMsg ? "hover:bg-gray-600 dark:hover:bg-blue-700" : "cursor-not-allowed opacity-70")}>
           {isSubmitting && <span className="spinner-border spinner-border-sm mr-1">
             <svg aria-hidden="true" role="status" className="inline w-4 h-4 mr-3 text-white animate-spin"
                  viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">

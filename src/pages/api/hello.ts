@@ -33,6 +33,7 @@ activity 2
 activity 3`,
       },
     ],
+
     max_tokens: 200, //parameters we set
     temperature: 0,   //check this cause i ain't writing allat: https://platform.openai.com/docs/api-reference/completions/create?lang=node.js
     top_p: 1,
