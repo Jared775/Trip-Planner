@@ -5,8 +5,8 @@ import { Property } from "csstype";
 import UserSelect = Property.UserSelect;
 
 
-export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible:Dispatch<SetStateAction<boolean>>, sidebarText: string, buttonLocationName:string}) {
-    const { drawerVisible, setDrawerVisible, sidebarText,buttonLocationName } = props;
+export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible:Dispatch<SetStateAction<boolean>>, sidebarText: string, buttonLocationName:string, sidebarPhotoLink:string}) {
+    const { drawerVisible, setDrawerVisible, sidebarText,buttonLocationName, sidebarPhotoLink } = props;
     return (
         <main className={"h-screen"}>
 
@@ -22,7 +22,7 @@ export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible
                  aria-labelledby="drawer-navigation-label">
                 <h5 id="drawer-navigation-label"
                     className="text-xl font-semibold text-gray-0 uppercase dark:text-gray-400">{buttonLocationName}</h5>
-
+                {sidebarPhotoLink && <img className = "mt-4 rounded-2xl" src={sidebarPhotoLink} alt={'preview photo of place of interest'}/>}
                 <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation"
                         onClick={()=>{setDrawerVisible(false)}}
                         className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -38,23 +38,9 @@ export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible
 
                 <div className="py-4 overflow-y-auto">
                     <ul className="space-y-2 font-medium">
-                        <li>
-                            <a href="#"
-                               className="flex whitespace-pre-line items-center p-2 text-sm text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <span className="ml-3">{sidebarText}</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <span className="ml-3">Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <span className="ml-3">Dashboard</span>
-                            </a>
+                        <li
+                            className="flex whitespace-pre-line items-center p-2 text-sm text-gray-900 rounded-lg dark:text-white group">
+                            <span className="ml-3">{sidebarText}</span>
                         </li>
                     </ul>
                 </div>

@@ -8,29 +8,19 @@ async function getRecs(location: string, days: number) { //takes in an input fro
         apiKey: process.env.OPENAI_API_KEY, //tells the program to read an environment variable outside the program to get the api key cause its secret
       })
   );
+  const prompt = `plan a ${days} day itinerary for ${location}, but do not print it out, extract key words that are locations and list them out under their respective days according to the format provided below.
+ex. 
+Day #
+activity
+activity
+activity`
 
   const rawResponse = await openai.createChatCompletion({ //makes a web request and returns the response
     model: "gpt-3.5-turbo-0613",  //takes the specific model of chat gbt
     messages: [   //the prompt we give chat
       {
         role: "user", //lets chat know that we will be giving it a prompt as a user
-        content: //the prompt
-            `plan a ${days} day itinerary for ${location}, but do not print it out, extract key words that are locations and list them out under their respective days according to the format provided below.
-ex. 
-Day 1:
-activity 1
-activity 2
-activity 3
-
-Day 2:
-activity 1
-activity 2
-activity 3
-
-Day 3:
-activity 1
-activity 2
-activity 3`,
+        content: prompt //the prompt
       },
     ],
 
@@ -43,6 +33,7 @@ activity 3`,
   const response = rawResponse.data //manually gets the data from the response and assigns it to a variable
 
   const content: string | undefined = response.choices[0].message?.content; //makes a variable 'content' and assigns it to the content portion of the response
+  console.log({prompt, content})
   if (!content) return [] //if there is no content then return an empty string
   const contentArray = content.split("\n"); //splits the content list into an array individual strings
   for (let i = 0; i < contentArray.length; i++) { //for loop for the length of the content array

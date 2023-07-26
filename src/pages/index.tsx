@@ -6,13 +6,14 @@ import {CellItem, Cells} from "@/components/cells";
 import {DatePicker} from "@/components/datePicker";
 import Sidebar from "@/components/sidebar";
 
+
 const inter = Inter({ subsets: ['latin'] })
 function calculateDaysBetweenDates(startDate: Date, endDate: Date): number {
   // Calculate the time difference in milliseconds
   const timeDiff = endDate.getTime() - startDate.getTime();
 
   // Convert the time difference to days
-  return Math.floor(timeDiff / (1000 * 60 * 60 * 24) + 1);
+  return Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 2;
 }
 
 const testItems: CellItem[][] = [
@@ -30,8 +31,9 @@ export default function Home() {
   const [startDate, setStartDate,] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
   const [drawerVisible, setDrawerVisible] = useState(false)
-  const [sidebarText, setSidebarText] = useState('loading...')
-  const [buttonLocationName, setButtonLocationName] = useState('...')
+  const [sidebarText, setSidebarText] = useState('Loading...')
+  const [buttonLocationName, setButtonLocationName] = useState('Loading...')
+  const [sidebarPhotoLink, setSidebarPhotoLink] = useState('')
   const setDateAndPrint = (newDate:Date) => {
     setStartDate(newDate)
     console.log(newDate)
@@ -78,15 +80,28 @@ export default function Home() {
 
   const onButtonClick = async (button: string) => {
     try {
+      setSidebarText('Loading...')
+      setButtonLocationName('Loading...')
+      setSidebarPhotoLink('')
       setDrawerVisible(true)
-      const buttonResponse = await axios.get('/api/goodbye', {
+      const buttonResponsePromise = axios.get('/api/goodbye', {
         params: {
           location: getValues('location'),
           button: button
         }
       })
+      const mapsResponsePromise = axios.get('/api/maps', {
+        params: {
+          location: getValues('location'),
+          button: button
+        }
+      })
+      const [buttonResponse, mapsResponse] = await Promise.all([buttonResponsePromise, mapsResponsePromise])
       setSidebarText(buttonResponse.data)
+      const {photoId, placeId} = mapsResponse.data;
+      const imageUrl = '/api/photo?photoId=' + photoId
       setButtonLocationName(button)
+      setSidebarPhotoLink(imageUrl)
     } catch (error) {
       console.error('Error', error)
     }
@@ -146,7 +161,7 @@ export default function Home() {
       {windowLoaded &&
         <Cells setCellsData={setContent} cellsData={content} drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} onButtonClick={onButtonClick}/>
       }
-      <Sidebar drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} sidebarText={sidebarText} buttonLocationName={buttonLocationName}></Sidebar>
+      <Sidebar drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} sidebarText={sidebarText} buttonLocationName={buttonLocationName} sidebarPhotoLink={sidebarPhotoLink}></Sidebar>
     </main>
   )
 }

@@ -15,18 +15,17 @@ async function getActivities(location: string, button: string){ //takes in an in
       {
         role: "user", //lets chat know that we will be giving it a prompt as a user
         content: //the prompt
-            `what to do at ${button} in ${location}, provide any relevant links`,
+            `answer this question in under 1400 characters and in numbered bullets: what to do at ${button} in ${location}, provide any relevant links`,
       },
     ],
 
-    max_tokens: 200, //parameters we set
+    max_tokens: 350, //parameters we set
     temperature: 0,   //check this cause i ain't writing allat: https://platform.openai.com/docs/api-reference/completions/create?lang=node.js
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
   });
   const response = rawResponse.data //manually gets the data from the response and assigns it to a variable
-
   const content: string | undefined = response.choices[0].message?.content; //makes a variable 'content' and assigns it to the content portion of the response
   if (!content) return '' //if there is no content then return an empty string
   return content
