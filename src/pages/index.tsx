@@ -12,9 +12,10 @@ const inter = Inter({ subsets: ['latin'] })
 function calculateDaysBetweenDates(startDate: Date, endDate: Date): number {
   // Calculate the time difference in milliseconds
   const timeDiff = endDate.getTime() - startDate.getTime();
-
+  if (endDate.getTime() === startDate.getTime()) {return Math.floor(1)}
   // Convert the time difference to days
   return Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 2;
+
 }
 
 const testItems: CellItem[][] = [
@@ -35,11 +36,15 @@ export default function Home() {
   const [sidebarText, setSidebarText] = useState('Loading...')
   const [buttonLocationName, setButtonLocationName] = useState('Loading...')
   const [sidebarPhotoLink, setSidebarPhotoLink] = useState('')
+  const [sidebarMapLat, setSideBarMapLat] = useState(0)
+  const [sidebarMapLng, setSideBarMapLng] = useState(0)
+
   const setDateAndPrint = (newDate:Date) => {
     setStartDate(newDate)
     console.log(newDate)
   }
   const days = calculateDaysBetweenDates(startDate, endDate)
+  console.log(days)
   let daysErrorMsg: string = ''
   if (days < 0){
     daysErrorMsg = "Start date is before the end date??"
@@ -51,7 +56,10 @@ export default function Home() {
     register,         //calls on the register attribute of the object, useForm()
     handleSubmit,     //calls on the handleSubmit attribute of useForm()
     formState: { errors, isSubmitting },  //calls on the formstate attribute of useform, but also calls on the errors and isSubmitting attribute of formState
-  } = useForm({values: {days: days, location: ''}});
+  } = useForm({
+    defaultValues: {days: days, location: ''},
+    values: {days: days}
+  });
 
 
   const submit = async (data: FieldValues) => {
@@ -85,6 +93,8 @@ export default function Home() {
       setButtonLocationName('Loading...')
       setSidebarPhotoLink('')
       setDrawerVisible(true)
+      setSideBarMapLat(0)
+      setSideBarMapLng(0)
       const buttonResponsePromise = axios.get('/api/goodbye', {
         params: {
           location: getValues('location'),
@@ -99,10 +109,12 @@ export default function Home() {
       })
       const [buttonResponse, mapsResponse] = await Promise.all([buttonResponsePromise, mapsResponsePromise])
       setSidebarText(buttonResponse.data)
-      const {photoId, placeId} = mapsResponse.data;
+      const {photoId, placeId, lat, lng} = mapsResponse.data;
       const imageUrl = '/api/photo?photoId=' + photoId
       setButtonLocationName(button)
       setSidebarPhotoLink(imageUrl)
+      setSideBarMapLat(Number(lat))
+      setSideBarMapLng(Number(lng))
     } catch (error) {
       console.error('Error', error)
     }
@@ -121,6 +133,7 @@ export default function Home() {
         <input className={"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"}
                placeholder="ex. Tokyo, Japan"
                {...register('location', { required: true })}
+
         />
         {errors.location && <p className = "text-red-600 text-sm">Location is required.</p>}
         {/*^checks if there is an error and the && checks if both conditions are true, and if they are then it displays the message*/}
@@ -162,7 +175,7 @@ export default function Home() {
       {windowLoaded &&
         <Cells setCellsData={setContent} cellsData={content} drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} onButtonClick={onButtonClick}/>
       }
-      <Sidebar drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} sidebarText={sidebarText} buttonLocationName={buttonLocationName} sidebarPhotoLink={sidebarPhotoLink}></Sidebar>
+      <Sidebar drawerVisible={drawerVisible} setDrawerVisible={setDrawerVisible} sidebarText={sidebarText} buttonLocationName={buttonLocationName} sidebarPhotoLink={sidebarPhotoLink} sidebarMapLat={sidebarMapLat} sidebarMapLng={sidebarMapLng}></Sidebar>
     </main>
   )
 }

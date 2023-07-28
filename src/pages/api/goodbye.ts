@@ -15,11 +15,11 @@ async function getActivities(location: string, button: string){ //takes in an in
       {
         role: "user", //lets chat know that we will be giving it a prompt as a user
         content: //the prompt
-            `answer this question in under 1400 characters and in numbered bullets: what to do at ${button} in ${location}, provide any relevant links`,
+            `answer this question in under 150 words and in numbered bullets: what to do at ${button} in ${location}, provide any relevant links`,
       },
     ],
 
-    max_tokens: 350, //parameters we set
+    max_tokens: 200, //parameters we set
     temperature: 0,   //check this cause i ain't writing allat: https://platform.openai.com/docs/api-reference/completions/create?lang=node.js
     top_p: 1,
     frequency_penalty: 0,
@@ -41,7 +41,7 @@ export default async function handler( //calls the function automatically
   const query = req.query //grabs query part of the url
   const location = query?.location  //grabs the location from the query
   const button = query?.button //grabs the days from the query
-  if (!location || !button || Array.isArray(location) || Array.isArray(button)) { //if there is not a location or day
+  if (!location || !button || Array.isArray(location) || Array.isArray(button)) { //if there is not a location or activity
     res.status(500).json({ "error_code": "bad request" })   //sends a bad request error code to the user
     return      //kill yourself (tells the function to kill itself since the rest of the program doesn't need to operate it can kill itself)
   }

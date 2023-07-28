@@ -2,11 +2,12 @@
 import React, {Dispatch, SetStateAction, useState} from "react";
 import { DragDropContext, Draggable, DraggableLocation, DraggingStyle, Droppable, DropResult, NotDraggingStyle } from "react-beautiful-dnd";
 import { Property } from "csstype";
+import {SimpleMap} from "@/components/GoogleMapReact";
 import UserSelect = Property.UserSelect;
 
 
-export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible:Dispatch<SetStateAction<boolean>>, sidebarText: string, buttonLocationName:string, sidebarPhotoLink:string}) {
-    const { drawerVisible, setDrawerVisible, sidebarText,buttonLocationName, sidebarPhotoLink } = props;
+export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible:Dispatch<SetStateAction<boolean>>, sidebarText: string, buttonLocationName:string, sidebarPhotoLink:string, sidebarMapLat:number, sidebarMapLng:number}) {
+    const { drawerVisible, setDrawerVisible, sidebarText,buttonLocationName, sidebarPhotoLink, sidebarMapLat, sidebarMapLng} = props;
     return (
         <main className={"h-screen"}>
 
@@ -18,7 +19,7 @@ export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible
             </div>
 
             <div id="drawer-navigation"
-                 className={(drawerVisible ? "" : "-translate-x-full") + " fixed top-0 left-0 z-40 w-[45rem] h-screen p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800"}
+                 className={(drawerVisible ? "" : "-translate-x-full") + " fixed top-0 left-0 z-40 sm:w-[45rem] w-screen h-screen p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800"}
                  aria-labelledby="drawer-navigation-label">
                 <h5 id="drawer-navigation-label"
                     className="text-xl font-semibold text-gray-0 uppercase dark:text-gray-400">{buttonLocationName}</h5>
@@ -43,6 +44,9 @@ export default function Sidebar(props : {drawerVisible:boolean, setDrawerVisible
                             <span className="ml-3">{sidebarText}</span>
                         </li>
                     </ul>
+                </div>
+                <div className = "h-">
+                    <SimpleMap buttonLng={sidebarMapLng} buttonLat={sidebarMapLat} button={buttonLocationName}></SimpleMap>
                 </div>
             </div>
         </main>

@@ -1,58 +1,88 @@
-import React from "react";
-import GoogleMapReact from 'google-map-react';
+import GoogleMap from "google-maps-react-markers";
+import { useRef, useState, MouseEvent, MouseEventHandler, ReactNode } from "react";
 
-interface AnyReactComponentProps {
-    text: string;
-    lat: number;
-    lng: number;
-}
+type MarkerProps = { markerId: string, lat: number, lng: number }
 
-const AnyReactComponent = ({ text }: AnyReactComponentProps) => <div>{text}</div>;
+const testMarkers: MarkerProps[] = [
+    {
+        markerId: '1',
+        lat: 45.4046987,
+        lng: 12.2472504
+    }
+]
 
-export default function SimpleMap(){
-    const defaultProps = {
-        center: {
-            lat: 10.99835602, //replace with lat and lng for button address
-            lng: 77.01502627
-        },
-        zoom: 11
-    };
+export const SimpleMap = (props: {button: string, buttonLat:number, buttonLng:number}) => {
+    let {buttonLat, buttonLng, button} = props;
+    buttonLat = Number(buttonLat)
+
+    console.log(buttonLat)
+    console.log(buttonLng)
+    console.log(button)
+    const realMarkers: MarkerProps[] = [{markerId: button, lat: buttonLat, lng: buttonLng}]
+    const mapRef = useRef<google.maps.Map | null>(null)
+    const [mapReady, setMapReady] = useState(false)
+    const [markers, setMarkers] = useState<MarkerProps[]>(realMarkers)
+
+    const onGoogleApiLoaded = (evt: { map: google.maps.Map }) => {
+        mapRef.current = evt.map
+        setMapReady(true)
+    }
+
+    const onMarkerClick = (evt: MouseEvent, markerProps: MarkerProps) => {
+        const { markerId, lat, lng } = markerProps
+        console.log('This is ->', markerId)
+
+        if (!mapRef.current) return
+
+        // inside the map instance you can call any google maps method
+        mapRef.current.setCenter({ lat, lng })
+        // ref. https://developers.google.com/maps/documentation/javascript/reference/map?hl=en#Map
+    }
+
+    // ref. https://developers.google.com/maps/documentation/javascript/reference/map?hl=en#MapOptions
+    const mapOptions: google.maps.MapOptions = {
+        center: { lat: buttonLat, lng: buttonLng },
+    }
 
     return (
-        // Important! Always set the container height explicitly
-        <div style={{ height: '100vh', width: '100%' }}>
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg" }}
-                defaultCenter={defaultProps.center}
-                defaultZoom={defaultProps.zoom}
+        <>
+            {mapReady && <div>Map is ready. See for logs in developer console.</div>}
+            <GoogleMap
+                apiKey="AIzaSyCu7fzCPB-moLd6BgUZPMYUMoTQZnc8Z6k"
+                defaultCenter={{ lat: buttonLat, lng: buttonLat }}
+                defaultZoom={14}
+                options={mapOptions}
+                mapMinHeight="50vh"
+                onGoogleApiLoaded={onGoogleApiLoaded}
+                onChange={(map: google.maps.Map) => console.log('Map moved', map)}
             >
-                <AnyReactComponent
-                    lat={59.955413}
-                    lng={30.337844}
-                    text="My Marker"
-                />
-            </GoogleMapReact>
-        </div>
-    );
+                {markers.map((markerProps: MarkerProps, index: number) => {
+                    const { lat, lng, markerId } = {markerId: button, lat: buttonLat, lng: buttonLng}
+                    console.log(markers)
+                    if (!mapRef.current) {
+                        return
+                    }
+                    mapRef.current.setCenter({ lat, lng })
+                    return (
+                        <Marker key={index} lat={buttonLat} lng={buttonLng} markerId={button} onClick={(evt: MouseEvent) => onMarkerClick(evt, markerProps)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor"
+                                 className="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                        </Marker>
+                    )
+                })}
+            </GoogleMap>
+        </>
+    )
 }
 
-
-//
-// const handleApiLoaded = (map:object, maps:object) => {
-//     // use map and maps objects
-// };
-//
-//
-// <GoogleMapReact
-//     bootstrapURLKeys={{ key: "AIzaSyBnKZLeLQvXat0WSFLFwTLbXDKpY0H_BuA" }}
-//     defaultCenter={this.props.center}
-//     defaultZoom={this.props.zoom}
-//     yesIWantToUseGoogleMapApiInternals
-//     onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-// >
-//     <AnyReactComponent
-//         lat={59.955413}
-//         lng={30.337844}
-//         text="My Marker"
-//     />
-// </GoogleMapReact>
+export const Marker = (props: MarkerProps & {onClick: MouseEventHandler, children?: ReactNode}) => {
+    const { children, onClick } = props
+    return (
+        <div onClick={onClick} className={"text-red-600 text-3xl font-bold"}>
+            {children}
+        </div>
+    )
+}
