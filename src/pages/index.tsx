@@ -7,6 +7,7 @@ import {DatePicker} from "@/components/datePicker";
 import Sidebar from "@/components/sidebar";
 
 
+
 const inter = Inter({ subsets: ['latin'] })
 function calculateDaysBetweenDates(startDate: Date, endDate: Date): number {
   // Calculate the time difference in milliseconds
